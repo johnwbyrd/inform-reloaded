@@ -1,0 +1,119 @@
+{
+  "name": "inform-reloaded",
+  "displayName": "Inform 7 Reloaded",
+  "description": "Modern development environment for Inform 7",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.99.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:inform7",
+    "onCommand:inform7.compile",
+    "onCommand:inform7.run"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "inform7",
+        "aliases": ["Inform 7", "inform7"],
+        "extensions": [".ni", ".i7"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "inform7.compile",
+        "title": "Compile Inform 7 Project"
+      },
+      {
+        "command": "inform7.run",
+        "title": "Run Inform 7 Story"
+      }
+    ],
+    "configuration": {
+      "title": "Inform 7",
+      "properties": {
+        "inform7.compilerPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the Inform 7 compiler executable"
+        },
+        "inform7.internalPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to Inform 7's internal resources"
+        }
+      }
+    },
+    "taskDefinitions": [
+      {
+        "type": "inform7",
+        "required": ["projectPath"],
+        "properties": {
+          "projectPath": {
+            "type": "string",
+            "description": "Path to the Inform 7 project"
+          },
+          "debug": {
+            "type": "boolean",
+            "description": "Compile with debugging features"
+          },
+          "release": {
+            "type": "boolean",
+            "description": "Compile a release version"
+          }
+        }
+      }
+    ],
+    "problemMatchers": [
+      {
+        "owner": "inform7",
+        "pattern": [
+          {
+            "regexp": "^In Volume (\\d+) - ([^,]+), Book (\\d+) - ([^,]+), Part (\\d+) - ([^:]+):$",
+            "file": 1,
+            "message": "Error in $2, $4, $6"
+          },
+          {
+            "regexp": "^\\+\\+ (\\d+)% \\(([^)]+)\\)$",
+            "message": "Compilation progress: $2 ($1%)"
+          },
+          {
+            "regexp": "^\\+\\+ Ended: Translation (failed|succeeded): (\\d+) problem(s)? found$",
+            "message": "Compilation $1: $2 $3"
+          }
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.99.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
+    "eslint": "^9.25.1",
+    "typescript": "^5.8.3",
+    "ts-loader": "^9.5.2",
+    "webpack": "^5.99.7",
+    "webpack-cli": "^6.0.1",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}
