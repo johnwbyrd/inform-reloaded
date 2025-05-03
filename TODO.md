@@ -10,6 +10,10 @@ This document outlines the remaining tasks and planned features for the Inform 7
 - ✅ Project compilation integration
 - ✅ Error reporting in Problems panel
 - ✅ Story execution
+- ✅ Comprehensive compiler flag configuration
+- ✅ Enhanced error handling for multi-line errors
+- ✅ Clean output handling with reduced diagnostic noise
+- ✅ Custom problem matcher for Inform 7 errors
 
 ### In Progress
 - 🚧 Improved syntax highlighting
@@ -25,11 +29,12 @@ This document outlines the remaining tasks and planned features for the Inform 7
 - Documentation tooltips for standard library functions
 
 #### Compilation Integration
-- Support for different compilation modes (debug/release)
+- ✅ Support for different compilation modes (debug/release)
+- ✅ Configuration options for all compiler flags
 - Release packaging options
 - Integration with interpreter selection
 - Support for multiple output formats
-- Improved error message display
+- ✅ Improved error message display
 
 #### Project Management
 - Inform 7 project creation/initialization
@@ -56,10 +61,11 @@ This document outlines the remaining tasks and planned features for the Inform 7
 - Proper handling of headings, comments, and quoted text
 
 ### Compiler Integration
-- Graceful handling of different Inform 7 compiler versions
+- ✅ Graceful handling of different compiler options
+- ✅ Comprehensive compiler flag configuration
 - Handling of multiple story files in a project
-- Output format selection (glulx, z-machine)
-- Extensible problem matchers for different compiler versions
+- ✅ Output format selection (glulx, z-machine)
+- ✅ Extensible problem matchers for different compiler versions
 
 ### Project Management
 - Extension-specific UI for creating new Inform 7 projects
@@ -78,6 +84,8 @@ The extension is organized into the following components:
 - **extension.ts**: Main entry point and command registration
 - **compiler/**: Compilation related functionality
   - compiler.ts: Core compiler integration
+  - compilerOptionsBuilder.ts: Building compiler command line options
+  - errorPreprocessor.ts: Handling multi-line errors
   - outputParser.ts: Parsing compiler output
   - progressTracker.ts: Tracking compilation progress
   - taskProvider.ts: VS Code task integration
@@ -87,9 +95,20 @@ The extension is organized into the following components:
 
 ## Next Development Tasks
 
-1. Complete error reporting and problem matching
-2. Implement improved syntax highlighting
-3. Add support for cross-platform file paths
-4. Create basic project templates
-5. Implement snippet support for common patterns
-6. Add support for documentation lookups 
+1. ✅ Complete error reporting and problem matching
+2. ✅ Implement comprehensive compiler flag support
+3. Implement improved syntax highlighting
+4. Add support for cross-platform file paths
+5. Create basic project templates
+6. Implement snippet support for common patterns
+7. Add support for documentation lookups
+8. Improve UX for compiler output and error handling
+
+## Recent Improvements
+
+- Added detailed documentation for all compiler options in package.json
+- Implemented error preprocessing to handle multi-line Inform 7 errors
+- Added support for all standard compiler flags including format, noindex, noprogress, and silence
+- Improved output handling for cleaner compilation feedback
+- Reorganized settings in package.json for better user experience
+- Enhanced README with comprehensive compiler configuration details 

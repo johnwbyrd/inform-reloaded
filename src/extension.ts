@@ -26,8 +26,19 @@ export async function activate(context: vscode.ExtensionContext) {
 		try {
 			await compiler.compile();
 		} catch (error) {
-			vscode.window.showErrorMessage(`Compilation failed: ${error}`);
-			outputChannel.appendLine(`Compilation failed: ${error}`);
+			// Extract and display the error message
+			const errorMessage = error instanceof Error ? error.message : String(error);
+			
+			// Show a concise error message in the UI
+			vscode.window.showErrorMessage(`Compilation failed: ${errorMessage}`);
+			
+			// Log more detailed information to the output channel
+			outputChannel.show(true); // Show and focus the output channel
+			outputChannel.appendLine(`\nCompilation failed: ${errorMessage}`);
+			
+			if (error instanceof Error && error.stack) {
+				outputChannel.appendLine(`\nStack trace:\n${error.stack}`);
+			}
 		}
 	});
 
@@ -37,8 +48,19 @@ export async function activate(context: vscode.ExtensionContext) {
 		try {
 			await compiler.run();
 		} catch (error) {
-			vscode.window.showErrorMessage(`Failed to run story: ${error}`);
-			outputChannel.appendLine(`Failed to run story: ${error}`);
+			// Extract and display the error message
+			const errorMessage = error instanceof Error ? error.message : String(error);
+			
+			// Show a concise error message in the UI
+			vscode.window.showErrorMessage(`Failed to run story: ${errorMessage}`);
+			
+			// Log more detailed information to the output channel
+			outputChannel.show(true); // Show and focus the output channel
+			outputChannel.appendLine(`\nFailed to run story: ${errorMessage}`);
+			
+			if (error instanceof Error && error.stack) {
+				outputChannel.appendLine(`\nStack trace:\n${error.stack}`);
+			}
 		}
 	});
 

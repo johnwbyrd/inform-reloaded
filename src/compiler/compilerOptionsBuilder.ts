@@ -21,10 +21,12 @@ export class CompilerOptionsBuilder {
     // Add project path (required)
     options.push('-project', projectPath);
     
-    // Add standard options
+    // Add essential path options
     this.addStringOption(options, 'external');
     this.addStringOption(options, 'internal');
     this.addStringOption(options, 'transient');
+    
+    // Add compilation mode options
     this.addBooleanOption(options, 'debug');
     this.addBooleanOption(options, 'release');
     this.addBooleanOption(options, 'basic');
@@ -33,6 +35,26 @@ export class CompilerOptionsBuilder {
     const output = this.config.get<string>('compilerFlags.output');
     if (output && output.trim() !== '') {
       options.push('-o', output);
+    }
+    
+    // Handle format option (-format=FORMAT)
+    const format = this.config.get<string>('compilerFlags.format');
+    if (format && format.trim() !== '') {
+      options.push(`-format=${format}`);
+    }
+    
+    // Add additional boolean options
+    this.addBooleanOption(options, 'noindex');
+    this.addBooleanOption(options, 'noprogress');
+    this.addBooleanOption(options, 'silence');
+    this.addBooleanOption(options, 'rng');
+    
+    // Add log options
+    const logOptions = this.config.get<string[]>('compilerFlags.logOptions') || [];
+    for (const aspect of logOptions) {
+      if (aspect && aspect.trim() !== '') {
+        options.push(`-log=${aspect}`);
+      }
     }
     
     // Add custom options

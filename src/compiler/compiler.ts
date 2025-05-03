@@ -158,26 +158,64 @@ export class Inform7Compiler {
         this.outputChannel = outputChannel;
     }
 
+    /**
+     * Validates that a path exists
+     * @param pathToCheck The path to check
+     * @param errorMessage The error message to throw if the path doesn't exist
+     * @private
+     */
+    private validatePathExists(pathToCheck: string, errorMessage: string): void {
+        if (!fs.existsSync(pathToCheck)) {
+            throw new Error(errorMessage);
+        }
+    }
+
     public async compile(): Promise<void> {
-        const compilerPath = this.config.get<string>('compilerPath');
-        
-        if (!compilerPath) {
-            throw new Error('Inform 7 compiler path not configured');
-        }
-
-        // Check for internal path in compiler flags
-        const internalPath = this.config.get<string>('compilerFlags.internal');
-        if (!internalPath) {
-            throw new Error('Inform 7 internal resources path not configured. Set inform7.compilerFlags.internal in settings.');
-        }
-
+        // Get workspace folder
         const workspaceFolders = vscode.workspace.workspaceFolders;
         if (!workspaceFolders) {
             throw new Error('No workspace folder found');
         }
-
         const projectPath = workspaceFolders[0].uri.fsPath;
-        const sourceFile = path.join('Source', this.config.get<string>('sourceFile') || 'story.ni');
+
+        // Check compiler path
+        const compilerPath = this.config.get<string>('compilerPath');
+        if (!compilerPath) {
+            throw new Error('Inform 7 compiler path not configured. Please set inform7.compilerPath in settings.');
+        }
+        this.validatePathExists(
+            compilerPath, 
+            `Inform 7 compiler not found at path: ${compilerPath}. Please check the inform7.compilerPath setting.`
+        );
+
+        // Check internal resources path
+        const internalPath = this.config.get<string>('compilerFlags.internal');
+        if (!internalPath) {
+            throw new Error('Inform 7 internal resources path not configured. Please set inform7.compilerFlags.internal in settings.');
+        }
+        this.validatePathExists(
+            internalPath,
+            `Inform 7 internal resources not found at path: ${internalPath}. Please check the inform7.compilerFlags.internal setting.`
+        );
+
+        // Check external resources path (if specified)
+        const externalPath = this.config.get<string>('compilerFlags.external');
+        if (externalPath && externalPath.trim() !== '') {
+            this.validatePathExists(
+                externalPath,
+                `Inform 7 external resources not found at path: ${externalPath}. Please check the inform7.compilerFlags.external setting.`
+            );
+        }
+
+        // Check source file
+        const sourceFileName = this.config.get<string>('sourceFile') || 'story.ni';
+        const sourceFile = path.join('Source', sourceFileName);
+        const fullSourcePath = path.join(projectPath, sourceFile);
+        
+        this.validatePathExists(
+            fullSourcePath,
+            `Source file not found: ${sourceFile}. Please check the inform7.sourceFile setting or create the file at the expected location.`
+        );
         
         // Build the compiler options
         const optionsBuilder = new CompilerOptionsBuilder(this.config);
@@ -245,33 +283,38 @@ export class Inform7Compiler {
         }
 
         const projectPath = workspaceFolders[0].uri.fsPath;
-        const storyFile = path.join(projectPath, 'Build', 'output.ulx');
-
-        if (!fs.existsSync(storyFile)) {
-            throw new Error('Story file not found. Please compile the project first.');
+        
+        // Determine output format
+        const format = this.config.get<string>('compilerFlags.format') || 'ulx';
+        
+        // Determine output path from settings or use default
+        const outputConfig = this.config.get<string>('compilerFlags.output') || '';
+        let storyFile: string;
+        
+        if (outputConfig && outputConfig.trim() !== '') {
+            // If output is explicitly specified, use that
+            storyFile = path.isAbsolute(outputConfig) 
+                ? outputConfig 
+                : path.join(projectPath, outputConfig);
+        } else {
+            // Use default path based on format
+            storyFile = path.join(projectPath, 'Build', `output.${format}`);
         }
 
-        // Create a task to run the story
-        const task = new vscode.Task(
-            { type: 'inform7', task: 'run' },
-            workspaceFolders[0],
-            'Run Inform 7 Story',
-            'Inform 7',
-            new vscode.ProcessExecution(storyFile),
-            '$inform7'
+        // Check if the story file exists
+        this.validatePathExists(
+            storyFile,
+            `Compiled story file not found: ${storyFile}. Please compile the project first.`
         );
 
-        // Configure the task
-        task.presentationOptions = {
-            echo: false,
-            reveal: vscode.TaskRevealKind.Silent,
-            showReuseMessage: false,
-            clear: true,
-            panel: vscode.TaskPanelKind.Shared,
-            focus: false
-        };
-
-        // Execute the task
-        await vscode.tasks.executeTask(task);
+        // Open the story file with the default application
+        try {
+            // Use code's built-in file opener
+            vscode.env.openExternal(vscode.Uri.file(storyFile));
+            
+            this.outputChannel.appendLine(`Opened story file: ${storyFile}`);
+        } catch (error) {
+            throw new Error(`Failed to open story file: ${error instanceof Error ? error.message : String(error)}`);
+        }
     }
 } 

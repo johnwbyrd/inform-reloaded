@@ -40,12 +40,12 @@
           "inform7.compilerPath": {
             "type": "string",
             "default": "",
-            "description": "Path to the Inform 7 compiler executable"
+            "description": "Path to the Inform 7 compiler executable (ni). This should be the full path to the Inform 7 command line compiler executable on your system. Example: 'C:/Program Files/Inform/Compilers/ni'"
           },
           "inform7.sourceFile": {
             "type": "string",
             "default": "story.ni",
-            "description": "Name of the main source file (relative to the Source directory)"
+            "description": "Name of the main source file (relative to the Source directory). Only change this if your main source file has a different name than the default 'story.ni'"
           }
         }
       },
@@ -55,37 +55,88 @@
           "inform7.compilerFlags.external": {
             "type": "string",
             "default": "",
-            "description": "Path to external resources (-external)"
+            "description": "Path to external resources (-external). Contains user-installed extensions, census data, and other personal resources outside the core system. On Windows, this is typically '%USERPROFILE%\\Documents\\Inform'. This directory is where your personal extensions are stored."
           },
           "inform7.compilerFlags.internal": {
             "type": "string",
             "default": "",
-            "description": "Path to internal resources (-internal)"
+            "description": "Path to internal resources (-internal). Contains built-in extensions, templates, and other system files required by the compiler. This is a REQUIRED setting for compilation to work. Example: 'C:/Program Files/Inform/Internal'"
           },
           "inform7.compilerFlags.transient": {
             "type": "string",
             "default": "",
-            "description": "Path to temporary working directory (-transient)"
+            "description": "Path to temporary working directory (-transient). Optional directory where temporary files can be stored during compilation. Only needed in specific cases where the default temporary directory is not suitable."
           },
           "inform7.compilerFlags.debug": {
             "type": "boolean",
             "default": false,
-            "description": "Include debugging features (-debug)"
+            "description": "Include debugging features (-debug). When enabled, adds debugging commands like ACTIONS, RULES, PURLOIN, GONEAR, SCOPE, etc. to the compiled story file. These allow for easier testing during development. Recommended during development and testing phases."
           },
           "inform7.compilerFlags.release": {
             "type": "boolean",
             "default": false,
-            "description": "Build a release version (-release)"
+            "description": "Build a release version (-release). Creates a story file optimized for distribution to players, removing debugging commands and test features. Recommended when preparing your final story for distribution. Can be combined with 'debug' for late-stage testing."
           },
           "inform7.compilerFlags.basic": {
             "type": "boolean",
             "default": false,
-            "description": "Use basic mode (-basic)"
+            "description": "Use basic mode (-basic). Compiles without the interactive fiction world model and parser. Converts Inform into a general-purpose programming language without interactive fiction infrastructure. Rarely needed for standard interactive fiction projects."
           },
           "inform7.compilerFlags.output": {
             "type": "string",
             "default": "",
-            "description": "Output file specification (-o)"
+            "description": "Output file specification (-o). Custom name or path for the output file. If not specified, the default output filenames will be used based on the format (e.g., 'output.ulx' for Glulx format)."
+          },
+          "inform7.compilerFlags.format": {
+            "type": "string",
+            "default": "ulx",
+            "enum": ["ulx", "Inform6/16d", "Inform6/32d"],
+            "description": "Output file format (-format=FORMAT). Sets the format of the compiled story file. 'ulx' is Glulx format (default, supports larger games), 'Inform6/16d' is Z-code compatible format for smaller games, and 'Inform6/32d' is for medium-sized games with Z-machine compatibility."
+          },
+          "inform7.compilerFlags.noindex": {
+            "type": "boolean",
+            "default": false,
+            "description": "Skip Index generation (-noindex). Reduces compilation time and disk space usage by not generating the Index. The Index is typically used by the IDE for navigation and documentation, but isn't needed for command-line compilation. For large projects, this can significantly improve performance."
+          },
+          "inform7.compilerFlags.noprogress": {
+            "type": "boolean",
+            "default": false,
+            "description": "Suppress progress reports (-noprogress). Reduces console output during compilation by not showing the detailed progress of each compilation phase. This makes the Output panel less cluttered with '++ XX% (Phase name)' messages."
+          },
+          "inform7.compilerFlags.silence": {
+            "type": "boolean",
+            "default": false,
+            "description": "Minimize console output (-silence). Keeps compiler almost completely quiet during compilation, showing only essential error messages. Also formats error messages in a Unix-style 'filename:line:' format convenient for IDE parsing. Combines well with -noindex and -noprogress."
+          },
+          "inform7.compilerFlags.rng": {
+            "type": "boolean",
+            "default": false,
+            "description": "Make random outcomes predictable (-rng). Useful for testing features that involve randomness. When enabled, the random number generator will produce the same sequence of values on each run, making randomized events reproducible for testing."
+          }
+        }
+      },
+      {
+        "title": "Inform 7 Debugging",
+        "properties": {
+          "inform7.compilerFlags.logOptions": {
+            "type": "array",
+            "default": [],
+            "description": "Enable specific debugging logs (-log=ASPECT). These logs provide detailed insight into compiler operations by showing internal workings of specific compiler components. Each aspect adds detailed diagnostic information to the debug log. Multiple aspects can be enabled simultaneously for comprehensive debugging.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "predicate-calculus", 
+                "inter", 
+                "grammar", 
+                "excerpt-meanings",
+                "phrase-compilation",
+                "phrase-usage",
+                "property-creations",
+                "rule-attachments",
+                "vocabulary",
+                "kind-checking"
+              ]
+            }
           }
         }
       },
@@ -95,7 +146,7 @@
           "inform7.customFlags": {
             "type": "array",
             "default": [],
-            "description": "Custom compiler flags (e.g. [\"-variable\", \"x=y\"])",
+            "description": "Custom compiler flags for advanced users. Allows passing additional command-line arguments directly to the compiler that aren't covered by the other settings. Examples include '-variable X=Y', '-census' to update extension census, '-scoring' to enable scoring, and any other specialized flags needed for your project.",
             "items": {
               "type": "string"
             }
