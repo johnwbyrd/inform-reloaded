@@ -75,21 +75,16 @@
     ],
     "problemMatchers": [
       {
+        "name": "inform7",
         "owner": "inform7",
-        "pattern": [
-          {
-            "regexp": "^SOURCE_FILE_START:(.*):SOURCE_FILE_END$",
-            "file": 1
-          },
-          {
-            "regexp": "^.*\\(source text, line (\\d+)\\).*$",
-            "line": 1
-          },
-          {
-            "regexp": "^\\s+>--> (.*)$",
-            "message": 1
-          }
-        ],
+        "source": "inform7",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": {
+          "regexp": "^INFORM7_ERROR\\|(.*?)\\|(\\d+)\\|(.*)$",
+          "file": 1,
+          "line": 2,
+          "message": 3
+        },
         "background": {
           "activeOnStart": true,
           "beginsPattern": "^\\+\\+ (\\d+)% \\(([^)]+)\\)$",

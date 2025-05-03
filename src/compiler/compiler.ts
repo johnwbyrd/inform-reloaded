@@ -10,17 +10,25 @@ class Inform7TaskTerminal implements vscode.Pseudoterminal {
     private closeEmitter = new vscode.EventEmitter<number>();
     onDidWrite: vscode.Event<string> = this.writeEmitter.event;
     onDidClose: vscode.Event<number> = this.closeEmitter.event;
+    private errorBuffer: string[] = [];
+    private isInErrorBlock = false;
+    private sourceFilePath: string;
 
     constructor(
         private projectPath: string,
         private sourceFile: string,
         private compilerPath: string,
-        private internalPath: string
-    ) {}
+        private internalPath: string,
+        private outputChannel: vscode.OutputChannel
+    ) {
+        this.sourceFilePath = sourceFile;
+    }
 
     open(): void {
         // First output the source file path
-        this.writeEmitter.fire(`SOURCE_FILE_START:${this.sourceFile}:SOURCE_FILE_END\r\n`);
+        const filePath = `SOURCE_FILE_START:${this.sourceFile}:SOURCE_FILE_END\r\n`;
+        this.outputChannel.appendLine(`Writing file path: ${filePath}`);
+        this.writeEmitter.fire(filePath);
 
         // Then run the compiler
         const compiler = cp.spawn(this.compilerPath, [
@@ -31,16 +39,106 @@ class Inform7TaskTerminal implements vscode.Pseudoterminal {
         });
 
         compiler.stdout.on('data', (data) => {
-            this.writeEmitter.fire(data.toString());
+            const output = data.toString();
+            this.outputChannel.appendLine(`Compiler stdout: ${output}`);
+            this.writeEmitter.fire(output);
         });
 
         compiler.stderr.on('data', (data) => {
-            this.writeEmitter.fire(data.toString());
+            const output = data.toString();
+            this.outputChannel.appendLine(`Compiler stderr: ${output}`);
+            
+            // Process output for error detection
+            this.processErrorOutput(output);
+            
+            // Still emit the original output
+            this.writeEmitter.fire(output);
         });
 
         compiler.on('close', (code) => {
+            // Process any remaining errors in the buffer
+            this.processRemainingErrors();
+            
+            this.outputChannel.appendLine(`Compiler process closed with code: ${code}`);
             this.closeEmitter.fire(code || 0);
         });
+    }
+
+    private processErrorOutput(output: string): void {
+        // Split the output by lines and process each line
+        const lines = output.split(/\r?\n/);
+        
+        for (const line of lines) {
+            // Start collecting error information when we see an error header
+            if (line.trim().startsWith('In ') && line.trim().endsWith(':')) {
+                this.isInErrorBlock = true;
+                this.errorBuffer = [line];
+            } 
+            // Collect error details
+            else if (this.isInErrorBlock) {
+                this.errorBuffer.push(line);
+                
+                // When we reach the end of an error block, process it
+                if (line.trim() === '' || line.includes('++ Ended:')) {
+                    this.processErrorBlock();
+                    this.isInErrorBlock = false;
+                    this.errorBuffer = [];
+                }
+            }
+        }
+    }
+    
+    private processErrorBlock(): void {
+        // Look for the line containing the error message and line number
+        const errorLines = this.errorBuffer.join('\n');
+        
+        // Extract line number from the pattern: (source text, line XX)
+        const lineMatch = errorLines.match(/\(source text, line (\d+)\)/);
+        if (!lineMatch) return;
+        
+        const lineNumber = lineMatch[1];
+        
+        // Try to extract a meaningful error message
+        let errorMessage = '';
+        
+        // Look for the line starting with >-->
+        for (const line of this.errorBuffer) {
+            if (line.includes('>-->')) {
+                // Extract everything after >-->
+                const messageParts = line.split('>-->');
+                if (messageParts.length > 1) {
+                    errorMessage = messageParts[1].trim();
+                    
+                    // If the message continues on next lines (indented), add them
+                    const errorIndex = this.errorBuffer.indexOf(line);
+                    for (let i = errorIndex + 1; i < this.errorBuffer.length; i++) {
+                        const nextLine = this.errorBuffer[i].trim();
+                        if (nextLine === '' || nextLine.startsWith('++')) break;
+                        errorMessage += ' ' + nextLine;
+                    }
+                    
+                    break;
+                }
+            }
+        }
+        
+        // If we couldn't extract a message, use the whole error block
+        if (!errorMessage) {
+            errorMessage = this.errorBuffer.join(' ').replace(/\s+/g, ' ').trim();
+        }
+        
+        // Output the error in our custom format
+        const customError = `INFORM7_ERROR|${this.sourceFilePath}|${lineNumber}|${errorMessage}\r\n`;
+        this.writeEmitter.fire(customError);
+        this.outputChannel.appendLine(`Formatted error: ${customError}`);
+    }
+    
+    private processRemainingErrors(): void {
+        if (this.isInErrorBlock && this.errorBuffer.length > 0) {
+            this.processErrorBlock();
+            this.isInErrorBlock = false;
+            this.errorBuffer = [];
+        }
     }
 
     close(): void {
@@ -52,11 +150,13 @@ export class Inform7Compiler {
     private config: vscode.WorkspaceConfiguration;
     private outputParser: OutputParser;
     private progressTracker: ProgressTracker;
+    private outputChannel: vscode.OutputChannel;
 
-    constructor() {
+    constructor(outputChannel: vscode.OutputChannel) {
         this.config = vscode.workspace.getConfiguration('inform7');
         this.outputParser = new OutputParser();
         this.progressTracker = new ProgressTracker();
+        this.outputChannel = outputChannel;
     }
 
     public async compile(): Promise<void> {
@@ -91,7 +191,8 @@ export class Inform7Compiler {
                         projectPath,
                         sourceFile,
                         compilerPath,
-                        internalPath
+                        internalPath,
+                        this.outputChannel
                     );
                 }
             ),
@@ -100,6 +201,7 @@ export class Inform7Compiler {
 
         // Configure the task to use our problem matcher and output panel
         task.problemMatchers = ['$inform7'];
+        this.outputChannel.appendLine(`Task problem matchers: ${JSON.stringify(task.problemMatchers)}`);
         task.presentationOptions = {
             echo: false,
             reveal: vscode.TaskRevealKind.Silent,

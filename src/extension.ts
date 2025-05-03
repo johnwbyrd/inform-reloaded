@@ -25,7 +25,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Register compile command
 	let compileCommand = vscode.commands.registerCommand('inform7.compile', async () => {
 		outputChannel.appendLine('Compile command triggered');
-		const compiler = new Inform7Compiler();
+		const compiler = new Inform7Compiler(outputChannel);
 		try {
 			await compiler.compile();
 		} catch (error) {
@@ -37,7 +37,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Register run command
 	let runCommand = vscode.commands.registerCommand('inform7.run', async () => {
 		outputChannel.appendLine('Run command triggered');
-		const compiler = new Inform7Compiler();
+		const compiler = new Inform7Compiler(outputChannel);
 		try {
 			await compiler.run();
 		} catch (error) {
