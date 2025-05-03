@@ -4,16 +4,14 @@
   "description": "Modern development environment for Inform 7",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.99.0"
+    "vscode": "^1.74.0"
   },
   "categories": [
     "Programming Languages",
     "Other"
   ],
   "activationEvents": [
-    "onLanguage:inform7",
-    "onCommand:inform7.compile",
-    "onCommand:inform7.run"
+    "onStartupFinished"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -47,6 +45,11 @@
           "type": "string",
           "default": "",
           "description": "Path to Inform 7's internal resources"
+        },
+        "inform7.sourceFile": {
+          "type": "string",
+          "default": "story.ni",
+          "description": "Name of the main source file (relative to the Source directory)"
         }
       }
     },
@@ -75,19 +78,23 @@
         "owner": "inform7",
         "pattern": [
           {
-            "regexp": "^In Volume (\\d+) - ([^,]+), Book (\\d+) - ([^,]+), Part (\\d+) - ([^:]+):$",
-            "file": 1,
-            "message": "Error in $2, $4, $6"
+            "regexp": "^SOURCE_FILE_START:(.*):SOURCE_FILE_END$",
+            "file": 1
           },
           {
-            "regexp": "^\\+\\+ (\\d+)% \\(([^)]+)\\)$",
-            "message": "Compilation progress: $2 ($1%)"
+            "regexp": "^.*\\(source text, line (\\d+)\\).*$",
+            "line": 1
           },
           {
-            "regexp": "^\\+\\+ Ended: Translation (failed|succeeded): (\\d+) problem(s)? found$",
-            "message": "Compilation $1: $2 $3"
+            "regexp": "^\\s+>--> (.*)$",
+            "message": 1
           }
-        ]
+        ],
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^\\+\\+ (\\d+)% \\(([^)]+)\\)$",
+          "endsPattern": "^\\+\\+ Ended: Translation (failed|succeeded): (\\d+) problem(s)? found$"
+        }
       }
     ]
   },
@@ -103,7 +110,7 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.99.0",
+    "@types/vscode": "^1.76.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
     "@typescript-eslint/eslint-plugin": "^8.31.1",
