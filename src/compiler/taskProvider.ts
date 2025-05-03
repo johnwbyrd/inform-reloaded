@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { Inform7Compiler } from './compiler';
+import { CompilerOptionsBuilder } from './compilerOptionsBuilder';
 
 export class Inform7TaskProvider implements vscode.TaskProvider {
     static Inform7Type = 'inform7';
@@ -13,13 +14,27 @@ export class Inform7TaskProvider implements vscode.TaskProvider {
             return tasks;
         }
 
+        // Get Inform 7 configuration
+        const config = vscode.workspace.getConfiguration('inform7');
+        const compilerPath = config.get<string>('compilerPath');
+        
+        if (!compilerPath) {
+            return tasks;
+        }
+
+        const projectPath = workspaceFolders[0].uri.fsPath;
+        
+        // Build the compiler options
+        const optionsBuilder = new CompilerOptionsBuilder(config);
+        const compilerArgs = optionsBuilder.buildOptions(projectPath);
+
         // Create compile task
         const compileTask = new vscode.Task(
             { type: Inform7TaskProvider.Inform7Type, task: 'compile' },
             workspaceFolders[0],
             'Compile Inform 7 Project',
             'Inform 7',
-            new vscode.ShellExecution('inform7', ['-project', '${workspaceFolder}']),
+            new vscode.ShellExecution(compilerPath, compilerArgs),
             '$inform7'
         );
         compileTask.group = vscode.TaskGroup.Build;

@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { OutputParser } from './outputParser';
 import { ProgressTracker } from './progressTracker';
+import { CompilerOptionsBuilder } from './compilerOptionsBuilder';
 import * as cp from 'child_process';
 
 class Inform7TaskTerminal implements vscode.Pseudoterminal {
@@ -18,7 +19,7 @@ class Inform7TaskTerminal implements vscode.Pseudoterminal {
         private projectPath: string,
         private sourceFile: string,
         private compilerPath: string,
-        private internalPath: string,
+        private compilerArgs: string[],
         private outputChannel: vscode.OutputChannel
     ) {
         this.sourceFilePath = sourceFile;
@@ -30,11 +31,9 @@ class Inform7TaskTerminal implements vscode.Pseudoterminal {
         this.outputChannel.appendLine(`Writing file path: ${filePath}`);
         this.writeEmitter.fire(filePath);
 
-        // Then run the compiler
-        const compiler = cp.spawn(this.compilerPath, [
-            '-project', this.projectPath,
-            '-internal', this.internalPath
-        ], {
+        // Then run the compiler with the provided args
+        this.outputChannel.appendLine(`Running compiler with args: ${this.compilerArgs.join(' ')}`);
+        const compiler = cp.spawn(this.compilerPath, this.compilerArgs, {
             cwd: this.projectPath
         });
 
@@ -161,14 +160,15 @@ export class Inform7Compiler {
 
     public async compile(): Promise<void> {
         const compilerPath = this.config.get<string>('compilerPath');
-        const internalPath = this.config.get<string>('internalPath');
-
+        
         if (!compilerPath) {
             throw new Error('Inform 7 compiler path not configured');
         }
 
+        // Check for internal path in compiler flags
+        const internalPath = this.config.get<string>('compilerFlags.internal');
         if (!internalPath) {
-            throw new Error('Inform 7 internal resources path not configured');
+            throw new Error('Inform 7 internal resources path not configured. Set inform7.compilerFlags.internal in settings.');
         }
 
         const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -177,7 +177,11 @@ export class Inform7Compiler {
         }
 
         const projectPath = workspaceFolders[0].uri.fsPath;
-        const sourceFile = path.join('Source', this.config.get<string>('inform7.sourceFile') || 'story.ni');
+        const sourceFile = path.join('Source', this.config.get<string>('sourceFile') || 'story.ni');
+        
+        // Build the compiler options
+        const optionsBuilder = new CompilerOptionsBuilder(this.config);
+        const compilerArgs = optionsBuilder.buildOptions(projectPath);
 
         // Create a task to run the compiler
         const task = new vscode.Task(
@@ -191,7 +195,7 @@ export class Inform7Compiler {
                         projectPath,
                         sourceFile,
                         compilerPath,
-                        internalPath,
+                        compilerArgs,
                         this.outputChannel
                     );
                 }

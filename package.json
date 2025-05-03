@@ -33,26 +33,76 @@
         "title": "Run Inform 7 Story"
       }
     ],
-    "configuration": {
-      "title": "Inform 7",
-      "properties": {
-        "inform7.compilerPath": {
-          "type": "string",
-          "default": "",
-          "description": "Path to the Inform 7 compiler executable"
-        },
-        "inform7.internalPath": {
-          "type": "string",
-          "default": "",
-          "description": "Path to Inform 7's internal resources"
-        },
-        "inform7.sourceFile": {
-          "type": "string",
-          "default": "story.ni",
-          "description": "Name of the main source file (relative to the Source directory)"
+    "configuration": [
+      {
+        "title": "Inform 7",
+        "properties": {
+          "inform7.compilerPath": {
+            "type": "string",
+            "default": "",
+            "description": "Path to the Inform 7 compiler executable"
+          },
+          "inform7.sourceFile": {
+            "type": "string",
+            "default": "story.ni",
+            "description": "Name of the main source file (relative to the Source directory)"
+          }
+        }
+      },
+      {
+        "title": "Inform 7 Compiler Flags",
+        "properties": {
+          "inform7.compilerFlags.external": {
+            "type": "string",
+            "default": "",
+            "description": "Path to external resources (-external)"
+          },
+          "inform7.compilerFlags.internal": {
+            "type": "string",
+            "default": "",
+            "description": "Path to internal resources (-internal)"
+          },
+          "inform7.compilerFlags.transient": {
+            "type": "string",
+            "default": "",
+            "description": "Path to temporary working directory (-transient)"
+          },
+          "inform7.compilerFlags.debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include debugging features (-debug)"
+          },
+          "inform7.compilerFlags.release": {
+            "type": "boolean",
+            "default": false,
+            "description": "Build a release version (-release)"
+          },
+          "inform7.compilerFlags.basic": {
+            "type": "boolean",
+            "default": false,
+            "description": "Use basic mode (-basic)"
+          },
+          "inform7.compilerFlags.output": {
+            "type": "string",
+            "default": "",
+            "description": "Output file specification (-o)"
+          }
+        }
+      },
+      {
+        "title": "Inform 7 Custom Flags",
+        "properties": {
+          "inform7.customFlags": {
+            "type": "array",
+            "default": [],
+            "description": "Custom compiler flags (e.g. [\"-variable\", \"x=y\"])",
+            "items": {
+              "type": "string"
+            }
+          }
         }
       }
-    },
+    ],
     "taskDefinitions": [
       {
         "type": "inform7",

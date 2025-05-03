@@ -11,6 +11,7 @@ This extension provides comprehensive support for developing Inform 7 stories di
 - **Project Compilation**: Compile Inform 7 projects with a single command
 - **Error Reporting**: Errors display in VS Code's Problems panel with line highlighting
 - **Story Execution**: Run your compiled stories directly from VS Code
+- **Compiler Configuration**: Customize compiler flags for various compilation modes
 
 ## Installation
 
@@ -19,24 +20,55 @@ This extension provides comprehensive support for developing Inform 7 stories di
 
 ## Setup
 
-Before using the extension, you need to configure the following settings:
+Before using the extension, you need to configure the following required settings:
 
 1. Open VS Code Settings (File > Preferences > Settings)
 2. Search for "Inform7"
-3. Configure the following required settings:
-   - `inform7.compilerPath`: Full path to the Inform 7 compiler executable
-   - `inform7.internalPath`: Path to Inform 7's internal resources folder
-   - `inform7.sourceFile`: (Optional) Name of your main source file (defaults to "story.ni")
+3. Set `inform7.compilerPath` to the full path of your Inform 7 compiler executable
+4. Set `inform7.compilerFlags.internal` to the path of your Inform 7 internal resources folder
+5. Optionally configure `inform7.sourceFile` if your main source file is not "story.ni"
 
 Example configuration:
 
 ```json
 {
   "inform7.compilerPath": "C:\\Program Files\\Inform 7\\Compilers\\inform7.exe",
-  "inform7.internalPath": "C:\\Program Files\\Inform 7\\Internal",
-  "inform7.sourceFile": "Source\\story.ni"
+  "inform7.compilerFlags.internal": "C:\\Program Files\\Inform 7\\Internal",
+  "inform7.sourceFile": "story.ni"
 }
 ```
+
+### Compiler Flag Configuration
+
+You can customize the compilation process using these additional settings:
+
+```json
+{
+  "inform7.compilerFlags": {
+    "external": "path/to/external/resources",
+    "internal": "path/to/internal/resources",
+    "transient": "path/to/temp/directory",
+    "debug": true,
+    "release": false,
+    "basic": false,
+    "output": "path/to/output/file"
+  },
+  "inform7.customFlags": [
+    "-variable",
+    "TEST_MODE=true"
+  ]
+}
+```
+
+Available compiler flags:
+- `external`: Path to external resources (`-external` flag)
+- `internal`: Path to internal resources (`-internal` flag) 
+- `transient`: Path to temporary working directory (`-transient` flag)
+- `debug`: Enable debugging features (`-debug` flag)
+- `release`: Build a release version (`-release` flag)
+- `basic`: Use basic mode (`-basic` flag)
+- `output`: Output file specification (`-o` flag)
+- `customFlags`: Array of additional arguments to pass to the compiler
 
 ## Usage
 
