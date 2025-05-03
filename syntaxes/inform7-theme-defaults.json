@@ -1,0 +1,144 @@
+{
+  "tokenColors": [
+    {
+      "scope": "keyword.other.heading.inform7",
+      "settings": {
+        "foreground": "#569CD6",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "entity.name.section.inform7",
+      "settings": {
+        "foreground": "#4EC9B0",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "comment.line.heading-description.inform7",
+      "settings": {
+        "foreground": "#608B4E",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": "markup.heading.table.inform7",
+      "settings": {
+        "foreground": "#569CD6",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "entity.name.table.inform7",
+      "settings": {
+        "foreground": "#4EC9B0",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "entity.name.tag.table-header.inform7",
+      "settings": {
+        "foreground": "#9CDCFE",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "string.quoted.double.table-cell.inform7",
+      "settings": {
+        "foreground": "#CE9178"
+      }
+    },
+    {
+      "scope": "string.unquoted.table-cell.inform7",
+      "settings": {
+        "foreground": "#DCDCAA"
+      }
+    },
+    {
+      "scope": "keyword.other.table-dimension.inform7",
+      "settings": {
+        "foreground": "#C586C0",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": "constant.numeric.inform7",
+      "settings": {
+        "foreground": "#B5CEA8"
+      }
+    },
+    {
+      "scope": "entity.name.function.rule.inform7",
+      "settings": {
+        "foreground": "#DCDCAA",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "storage.type.inform7",
+      "settings": {
+        "foreground": "#4EC9B0"
+      }
+    },
+    {
+      "scope": "storage.modifier.inform7",
+      "settings": {
+        "foreground": "#C586C0"
+      }
+    },
+    {
+      "scope": "variable.parameter.inform7",
+      "settings": {
+        "foreground": "#9CDCFE"
+      }
+    },
+    {
+      "scope": "variable.other.inform7",
+      "settings": {
+        "foreground": "#9CDCFE"
+      }
+    },
+    {
+      "scope": "entity.name.type.inform7",
+      "settings": {
+        "foreground": "#4EC9B0"
+      }
+    },
+    {
+      "scope": "meta.enumeration.inform7",
+      "settings": {
+        "foreground": "#DCDCAA"
+      }
+    },
+    {
+      "scope": "keyword.other.substitution.inform7",
+      "settings": {
+        "foreground": "#C586C0"
+      }
+    },
+    {
+      "scope": "markup.bold.inform7",
+      "settings": {
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "markup.italic.inform7",
+      "settings": {
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": "markup.underline.inform7",
+      "settings": {
+        "fontStyle": "underline"
+      }
+    },
+    {
+      "scope": "constant.character.substitution.inform7",
+      "settings": {
+        "foreground": "#D7BA7D"
+      }
+    }
+  ]
+} 

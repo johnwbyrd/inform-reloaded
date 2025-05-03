@@ -1,0 +1,305 @@
+{
+  "name": "Inform 7",
+  "scopeName": "source.inform7",
+  "fileTypes": ["ni", "i7"],
+  "patterns": [
+    {
+      "include": "#headings"
+    },
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#string"
+    },
+    {
+      "include": "#tables"
+    },
+    {
+      "include": "#declarations"
+    },
+    {
+      "include": "#rules"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#comparisons"
+    },
+    {
+      "include": "#function-calls"
+    },
+    {
+      "include": "#variables"
+    },
+    {
+      "include": "#substitutions"
+    }
+  ],
+  "repository": {
+    "headings": {
+      "patterns": [
+        {
+          "name": "markup.heading.volume.inform7",
+          "match": "^(Volume)\\s+(.+?)(\\s*-.*)?$",
+          "captures": {
+            "1": { "name": "keyword.other.heading.inform7" },
+            "2": { "name": "entity.name.section.inform7" },
+            "3": { "name": "comment.line.heading-description.inform7" }
+          }
+        },
+        {
+          "name": "markup.heading.book.inform7",
+          "match": "^(Book)\\s+(.+?)(\\s*-.*)?$",
+          "captures": {
+            "1": { "name": "keyword.other.heading.inform7" },
+            "2": { "name": "entity.name.section.inform7" },
+            "3": { "name": "comment.line.heading-description.inform7" }
+          }
+        },
+        {
+          "name": "markup.heading.part.inform7",
+          "match": "^(Part)\\s+(.+?)(\\s*-.*)?$",
+          "captures": {
+            "1": { "name": "keyword.other.heading.inform7" },
+            "2": { "name": "entity.name.section.inform7" },
+            "3": { "name": "comment.line.heading-description.inform7" }
+          }
+        },
+        {
+          "name": "markup.heading.chapter.inform7",
+          "match": "^(Chapter)\\s+(.+?)(\\s*-.*)?$",
+          "captures": {
+            "1": { "name": "keyword.other.heading.inform7" },
+            "2": { "name": "entity.name.section.inform7" },
+            "3": { "name": "comment.line.heading-description.inform7" }
+          }
+        },
+        {
+          "name": "markup.heading.section.inform7",
+          "match": "^(Section)\\s+(.+?)(\\s*-.*)?$",
+          "captures": {
+            "1": { "name": "keyword.other.heading.inform7" },
+            "2": { "name": "entity.name.section.inform7" },
+            "3": { "name": "comment.line.heading-description.inform7" }
+          }
+        }
+      ]
+    },
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.bracketed.inform7",
+          "begin": "\\[",
+          "end": "\\]"
+        }
+      ]
+    },
+    "string": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.inform7",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.inform7",
+              "match": "\\\\."
+            },
+            {
+              "name": "markup.bold.inform7",
+              "begin": "\\[bold type\\]",
+              "end": "\\[roman type\\]"
+            },
+            {
+              "name": "markup.italic.inform7",
+              "begin": "\\[italic type\\]",
+              "end": "\\[roman type\\]"
+            },
+            {
+              "name": "markup.underline.inform7",
+              "begin": "\\[fixed letter spacing\\]",
+              "end": "\\[variable letter spacing\\]"
+            },
+            {
+              "name": "constant.character.substitution.inform7",
+              "match": "\\[.*?\\]"
+            }
+          ]
+        }
+      ]
+    },
+    "tables": {
+      "patterns": [
+        {
+          "name": "markup.table.inform7",
+          "begin": "^(Table(\\s+of\\s+.+))$",
+          "beginCaptures": {
+            "1": { "name": "markup.heading.table.inform7" },
+            "2": { "name": "entity.name.table.inform7" }
+          },
+          "end": "^\\s*$",
+          "patterns": [
+            {
+              "match": "\\b(with\\s+(\\d+)\\s+(row|column)s?)\\b",
+              "captures": {
+                "1": { "name": "keyword.other.table-dimension.inform7" },
+                "2": { "name": "constant.numeric.inform7" },
+                "3": { "name": "keyword.other.inform7" }
+              }
+            },
+            {
+              "name": "markup.table.header.inform7",
+              "match": "^\\s*(\\w[^\\t]*(?:\\t\\w[^\\t]*)*)\\s*$",
+              "captures": {
+                "1": { "name": "entity.name.tag.table-header.inform7" }
+              }
+            },
+            {
+              "name": "markup.table.row.inform7",
+              "match": "^\\s*\"([^\"]*)\"(?:\\t\"([^\"]*)\")*\\s*$",
+              "captures": {
+                "1": { "name": "string.quoted.double.table-cell.inform7" },
+                "2": { "name": "string.quoted.double.table-cell.inform7" }
+              }
+            },
+            {
+              "name": "markup.table.row.inform7",
+              "match": "^\\s*([^\\t]*)(?:\\t([^\\t]*))*\\s*$",
+              "captures": {
+                "1": { "name": "string.unquoted.table-cell.inform7" },
+                "2": { "name": "string.unquoted.table-cell.inform7" }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "declarations": {
+      "patterns": [
+        {
+          "name": "meta.declaration.variable.inform7",
+          "match": "\\b(The\\s+[\\w\\s]+)\\s+(is\\s+(?:a|an)\\s+[\\w\\s-]+(?:\\s+that\\s+varies))\\b",
+          "captures": {
+            "1": { "name": "variable.other.inform7" },
+            "2": { "name": "storage.type.inform7" }
+          }
+        },
+        {
+          "name": "meta.declaration.kind.inform7",
+          "match": "\\b([A-Z][a-z]+(?:\\s+[a-z]+)*)\\s+(is\\s+(?:a|an)\\s+kind\\s+of\\s+[\\w\\s]+)\\.",
+          "captures": {
+            "1": { "name": "entity.name.type.inform7" },
+            "2": { "name": "storage.type.inform7" }
+          }
+        },
+        {
+          "name": "meta.declaration.enumeration.inform7",
+          "match": "\\b(The\\s+[\\w\\s]+)\\s+(are\\s+[^.]+)\\.",
+          "captures": {
+            "1": { "name": "entity.name.type.inform7" },
+            "2": { "name": "meta.enumeration.inform7" }
+          }
+        },
+        {
+          "name": "meta.declaration.property.inform7",
+          "match": "\\b([A-Z][a-z]+(?:\\s+[a-z]+)*)\\s+((?:has|have|carries|carry|provides|provide|can)\\s+[^.]+)\\.",
+          "captures": {
+            "1": { "name": "entity.name.type.inform7" },
+            "2": { "name": "storage.modifier.inform7" }
+          }
+        }
+      ]
+    },
+    "rules": {
+      "patterns": [
+        {
+          "name": "meta.rule.definition.inform7",
+          "begin": "^(\\w[^:]*?):$",
+          "beginCaptures": {
+            "1": { "name": "entity.name.function.rule.inform7" }
+          },
+          "end": "^\\s*$",
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#string"
+            },
+            {
+              "include": "#keywords"
+            },
+            {
+              "include": "#comparisons"
+            },
+            {
+              "include": "#function-calls"
+            }
+          ]
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "match": "\\b(if|unless|otherwise|else|repeat|while|end repeat|end if|begin|end|say|instead|to|rule|rulebook|when|end when)\\b",
+          "name": "keyword.control.inform7"
+        },
+        {
+          "match": "\\b(is|are|has|have|was|were|can|can't|cannot|is not|are not|has not|have not|was not|were not)\\b",
+          "name": "keyword.operator.inform7"
+        },
+        {
+          "match": "\\b(called|understand|as|meaning|implies|before|after|for|in|from|to|by|and|or|not|with)\\b",
+          "name": "keyword.other.inform7"
+        },
+        {
+          "match": "\\b(room|thing|container|supporter|backdrop|door|person|animal|vehicle|device|region|direction|action|truth state|number|time|scene|phrase|relation|kind|description|object|rulebook|table-name|value)\\b",
+          "name": "storage.type.inform7"
+        },
+        {
+          "match": "\\b(varies|variable)\\b",
+          "name": "storage.modifier.inform7"
+        }
+      ]
+    },
+    "comparisons": {
+      "patterns": [
+        {
+          "match": "(>=|<=|>|<|==|=|\\!=)",
+          "name": "keyword.operator.comparison.inform7"
+        }
+      ]
+    },
+    "function-calls": {
+      "patterns": [
+        {
+          "match": "\\b([a-zA-Z][a-zA-Z0-9 ]*?)\\(",
+          "captures": {
+            "1": { "name": "entity.name.function.inform7" }
+          }
+        }
+      ]
+    },
+    "variables": {
+      "patterns": [
+        {
+          "match": "\\b[A-Z][A-Za-z0-9 ]+\\b",
+          "name": "variable.parameter.inform7"
+        }
+      ]
+    },
+    "substitutions": {
+      "patterns": [
+        {
+          "match": "\\[([^\\]]+)\\]",
+          "captures": {
+            "1": { "name": "keyword.other.substitution.inform7" }
+          }
+        }
+      ]
+    }
+  }
+} 

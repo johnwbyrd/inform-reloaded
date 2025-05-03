@@ -5,22 +5,26 @@
   },
   "brackets": [
     ["[", "]"],
-    ["(", ")"]
+    ["(", ")"],
+    ["{", "}"]
   ],
   "autoClosingPairs": [
     { "open": "[", "close": "]" },
     { "open": "(", "close": ")" },
+    { "open": "{", "close": "}" },
     { "open": "\"", "close": "\"", "notIn": ["string"] }
   ],
   "surroundingPairs": [
     ["[", "]"],
     ["(", ")"],
+    ["{", "}"],
     ["\"", "\""]
   ],
   "folding": {
     "markers": {
-      "start": "^Volume\\s+\\d+\\s*-",
-      "end": "^$"
+      "start": "^(Volume|Book|Part|Chapter|Section)\\s+.*?\\s*(-|:)",
+      "end": "^(Volume|Book|Part|Chapter|Section)\\s+.*?\\s*(-|:)|^$"
     }
-  }
+  },
+  "wordPattern": "([a-zA-Z][a-zA-Z0-9_-]*)|([^`~!@#%^&*()=+\\[{\\]}\\\\|;:'\",.\\s<>?/][^`~!@#%^&*()=+\\[{\\]}\\\\|;:'\",.\\s<>?/]*)"
 } 

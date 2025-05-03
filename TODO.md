@@ -14,16 +14,15 @@ This document outlines the remaining tasks and planned features for the Inform 7
 - ✅ Enhanced error handling for multi-line errors
 - ✅ Clean output handling with reduced diagnostic noise
 - ✅ Custom problem matcher for Inform 7 errors
+- ✅ Comprehensive syntax highlighting for Inform 7
 
 ### In Progress
-- 🚧 Improved syntax highlighting
 - 🚧 Cross-platform file path support
 - 🚧 Folding provider optimization
 
 ### Planned Features
 
 #### Language Support
-- Comprehensive syntax highlighting covering all Inform 7 language constructs
 - Advanced code folding with proper nesting
 - Snippets for common Inform 7 patterns and templates
 - Documentation tooltips for standard library functions

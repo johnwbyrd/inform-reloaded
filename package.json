@@ -23,6 +23,19 @@
         "configuration": "./language-configuration.json"
       }
     ],
+    "grammars": [
+      {
+        "language": "inform7",
+        "scopeName": "source.inform7",
+        "path": "./syntaxes/inform7.tmLanguage.json"
+      }
+    ],
+    "themes": [
+      {
+        "label": "Inform 7 Theme Defaults",
+        "path": "./syntaxes/inform7-theme-defaults.json"
+      }
+    ],
     "commands": [
       {
         "command": "inform7.compile",
@@ -31,6 +44,10 @@
       {
         "command": "inform7.run",
         "title": "Run Inform 7 Story"
+      },
+      {
+        "command": "inform7.showOutput",
+        "title": "Show Inform 7 Output"
       }
     ],
     "configuration": [
