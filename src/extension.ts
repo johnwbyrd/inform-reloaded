@@ -12,7 +12,6 @@ let outputChannel: vscode.OutputChannel;
 export async function activate(context: vscode.ExtensionContext) {
 	// Create and register output channel
 	outputChannel = vscode.window.createOutputChannel('Inform 7 Reloaded');
-	outputChannel.show();
 	outputChannel.appendLine('Inform 7 Reloaded extension is now active!');
 	
 	// Register the task provider
@@ -20,11 +19,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.tasks.registerTaskProvider('inform7', taskProvider)
 	);
-	outputChannel.appendLine('Task provider registered');
 
 	// Register compile command
 	let compileCommand = vscode.commands.registerCommand('inform7.compile', async () => {
-		outputChannel.appendLine('Compile command triggered');
 		const compiler = new Inform7Compiler(outputChannel);
 		try {
 			await compiler.compile();
@@ -36,7 +33,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	// Register run command
 	let runCommand = vscode.commands.registerCommand('inform7.run', async () => {
-		outputChannel.appendLine('Run command triggered');
 		const compiler = new Inform7Compiler(outputChannel);
 		try {
 			await compiler.run();
@@ -47,16 +43,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 
 	context.subscriptions.push(compileCommand, runCommand);
-	outputChannel.appendLine('Commands registered');
-
-	// Show a message to confirm activation
-	vscode.window.showInformationMessage('Inform 7 Reloaded extension is now active!');
 }
 
 // This method is called when your extension is deactivated
 export function deactivate() {
 	if (outputChannel) {
-		outputChannel.appendLine('Inform 7 Reloaded extension is now deactivated');
 		outputChannel.dispose();
 	}
 }

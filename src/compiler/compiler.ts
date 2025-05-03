@@ -28,24 +28,25 @@ class Inform7TaskTerminal implements vscode.Pseudoterminal {
     open(): void {
         // First output the source file path
         const filePath = `SOURCE_FILE_START:${this.sourceFile}:SOURCE_FILE_END\r\n`;
-        this.outputChannel.appendLine(`Writing file path: ${filePath}`);
+        // Don't log this detail to the output channel
         this.writeEmitter.fire(filePath);
 
         // Then run the compiler with the provided args
-        this.outputChannel.appendLine(`Running compiler with args: ${this.compilerArgs.join(' ')}`);
+        // Log the command being run, which is useful information
+        this.outputChannel.appendLine(`Running Inform 7 compiler with: ${this.compilerPath} ${this.compilerArgs.join(' ')}`);
         const compiler = cp.spawn(this.compilerPath, this.compilerArgs, {
             cwd: this.projectPath
         });
 
         compiler.stdout.on('data', (data) => {
             const output = data.toString();
-            this.outputChannel.appendLine(`Compiler stdout: ${output}`);
+            this.outputChannel.appendLine(output);
             this.writeEmitter.fire(output);
         });
 
         compiler.stderr.on('data', (data) => {
             const output = data.toString();
-            this.outputChannel.appendLine(`Compiler stderr: ${output}`);
+            this.outputChannel.appendLine(output);
             
             // Process output for error detection
             this.processErrorOutput(output);
@@ -129,7 +130,6 @@ class Inform7TaskTerminal implements vscode.Pseudoterminal {
         // Output the error in our custom format
         const customError = `INFORM7_ERROR|${this.sourceFilePath}|${lineNumber}|${errorMessage}\r\n`;
         this.writeEmitter.fire(customError);
-        this.outputChannel.appendLine(`Formatted error: ${customError}`);
     }
     
     private processRemainingErrors(): void {
@@ -205,7 +205,7 @@ export class Inform7Compiler {
 
         // Configure the task to use our problem matcher and output panel
         task.problemMatchers = ['$inform7'];
-        this.outputChannel.appendLine(`Task problem matchers: ${JSON.stringify(task.problemMatchers)}`);
+        this.outputChannel.appendLine(`Compiling Inform 7 project...`);
         task.presentationOptions = {
             echo: false,
             reveal: vscode.TaskRevealKind.Silent,
