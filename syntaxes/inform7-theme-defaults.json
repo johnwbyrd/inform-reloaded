@@ -22,6 +22,12 @@
       }
     },
     {
+      "scope": "comment.block.inform7",
+      "settings": {
+        "foreground": "#6A9955"
+      }
+    },
+    {
       "scope": "markup.heading.table.inform7",
       "settings": {
         "foreground": "#569CD6",
@@ -75,6 +81,12 @@
       }
     },
     {
+      "scope": "meta.rule.inform7",
+      "settings": {
+        "foreground": "#569CD6"
+      }
+    },
+    {
       "scope": "storage.type.inform7",
       "settings": {
         "foreground": "#4EC9B0"
@@ -108,6 +120,18 @@
       "scope": "meta.enumeration.inform7",
       "settings": {
         "foreground": "#DCDCAA"
+      }
+    },
+    {
+      "scope": "string.quoted.double.say.inform7",
+      "settings": {
+        "foreground": "#CE9178"
+      }
+    },
+    {
+      "scope": "keyword.other.substitution.content.inform7",
+      "settings": {
+        "foreground": "#C586C0"
       }
     },
     {

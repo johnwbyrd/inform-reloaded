@@ -10,6 +10,9 @@
       "include": "#comments"
     },
     {
+      "include": "#say-statement"
+    },
+    {
       "include": "#string"
     },
     {
@@ -90,9 +93,59 @@
     "comments": {
       "patterns": [
         {
-          "name": "comment.line.bracketed.inform7",
+          "name": "comment.block.inform7",
           "begin": "\\[",
-          "end": "\\]"
+          "end": "\\]",
+          "patterns": []
+        }
+      ]
+    },
+    "say-statement": {
+      "patterns": [
+        {
+          "name": "meta.say-statement.inform7",
+          "begin": "\\b(say)\\s+(\")",
+          "beginCaptures": {
+            "1": { "name": "keyword.control.inform7" },
+            "2": { "name": "punctuation.definition.string.begin.inform7" }
+          },
+          "end": "(\")(;)",
+          "endCaptures": {
+            "1": { "name": "punctuation.definition.string.end.inform7" },
+            "2": { "name": "punctuation.terminator.inform7" }
+          },
+          "patterns": [
+            {
+              "name": "string.quoted.double.say.inform7",
+              "match": "."
+            },
+            {
+              "name": "constant.character.escape.inform7",
+              "match": "\\\\."
+            },
+            {
+              "name": "markup.bold.inform7",
+              "begin": "\\[bold type\\]",
+              "end": "\\[roman type\\]"
+            },
+            {
+              "name": "markup.italic.inform7",
+              "begin": "\\[italic type\\]",
+              "end": "\\[roman type\\]"
+            },
+            {
+              "name": "markup.underline.inform7",
+              "begin": "\\[fixed letter spacing\\]",
+              "end": "\\[variable letter spacing\\]"
+            },
+            {
+              "name": "constant.character.substitution.inform7",
+              "match": "\\[(.*?)\\]",
+              "captures": {
+                "1": { "name": "keyword.other.substitution.content.inform7" }
+              }
+            }
+          ]
         }
       ]
     },
@@ -124,7 +177,10 @@
             },
             {
               "name": "constant.character.substitution.inform7",
-              "match": "\\[.*?\\]"
+              "match": "\\[(.*?)\\]",
+              "captures": {
+                "1": { "name": "keyword.other.substitution.content.inform7" }
+              }
             }
           ]
         }
@@ -226,6 +282,9 @@
               "include": "#comments"
             },
             {
+              "include": "#say-statement"
+            },
+            {
               "include": "#string"
             },
             {
@@ -238,13 +297,23 @@
               "include": "#function-calls"
             }
           ]
+        },
+        {
+          "name": "meta.rule.definition.inform7",
+          "match": "\\b(((?:carry out|check|report|before|after|instead of)\\s+.+?)\\s+(\\(this is the (.+?) rule\\)))",
+          "captures": {
+            "1": { "name": "meta.rule.inform7" },
+            "2": { "name": "keyword.control.inform7" },
+            "3": { "name": "meta.rule.name.inform7" },
+            "4": { "name": "entity.name.function.rule.inform7" }
+          }
         }
       ]
     },
     "keywords": {
       "patterns": [
         {
-          "match": "\\b(if|unless|otherwise|else|repeat|while|end repeat|end if|begin|end|say|instead|to|rule|rulebook|when|end when)\\b",
+          "match": "\\b(if|unless|otherwise|else|repeat|while|end repeat|end if|begin|end|say|instead|to|rule|rulebook|when|end when|now)\\b",
           "name": "keyword.control.inform7"
         },
         {
@@ -252,11 +321,11 @@
           "name": "keyword.operator.inform7"
         },
         {
-          "match": "\\b(called|understand|as|meaning|implies|before|after|for|in|from|to|by|and|or|not|with)\\b",
+          "match": "\\b(called|understand|as|meaning|implies|before|after|for|in|from|to|by|and|or|not|with|carry out|check|report|instead of|nowhere)\\b",
           "name": "keyword.other.inform7"
         },
         {
-          "match": "\\b(room|thing|container|supporter|backdrop|door|person|animal|vehicle|device|region|direction|action|truth state|number|time|scene|phrase|relation|kind|description|object|rulebook|table-name|value)\\b",
+          "match": "\\b(room|thing|container|supporter|backdrop|door|person|animal|vehicle|device|region|direction|action|truth state|number|time|scene|phrase|relation|kind|description|object|rulebook|table-name|value|actor)\\b",
           "name": "storage.type.inform7"
         },
         {
